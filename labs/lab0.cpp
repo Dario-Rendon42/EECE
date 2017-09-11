@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 using namespace std;
 
 double* v;
@@ -84,18 +83,36 @@ void AddElement() {
         Grow();
     }
     cout << "Enter the new element: ";
-    v_count++;
     cin >> v[v_count];
+    v_count++;
 }
 
 void PrintVector() {
     for(int i = 0; i < v_count; i++) {
-        cout << to_string(v[i]) << " ";
+        cout << v[i] << " ";
     }
     cout << endl;
 }
 
 void RemoveElement() {
-    v[v_count] = NULL;
-    v_count--;
+    if(v_count > 0) {
+        v[v_count] = NULL;
+        v_count--;
+        if(v_count < .3 * v_size) {
+            Shrink();
+        }
+    }
+}
+
+void Shrink() {
+    cout << "Vector shrunk" << endl;
+    cout << "Previous capacity: " << v_size << " elements" << endl;
+    v_size /= 2;
+    cout << "New capacity: " << v_size << " elements" << endl;
+    double* nv = new double[v_size];
+    for(int i = 0; i < v_count; i++) {
+        nv[i] = v[i];
+    }
+    delete [] v;
+    v = nv;
 }
