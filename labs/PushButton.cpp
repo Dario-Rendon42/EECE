@@ -107,6 +107,20 @@ int Read1Switch(char *pBase, int switchNum) {
     return RegisterRead(pBase, switchOffset);
 }
 
+/** Read the state of the buttons
+*
+* @param pBase Base address for general-purpose I/O
+*/
+int PushButtonGet(char *pBase) {
+    for (int i = 0; i < 5; i++) {
+        int value = RegisterRead(pBase, gpio_pbtnl_offset + 4 * i);
+        if (value != 0) {
+            return i + 1;
+        }
+    }
+    return 0;
+}
+
 
 /** Set the state of the LEDs with the given value.
 *
@@ -135,7 +149,6 @@ int ReadAllSwitches(char *pBase) {
     return sum;
 }
 
-
 /** 
  * Main function to interact with I/O Interfaces
  */
@@ -150,39 +163,39 @@ int main() {
         exit(1); // Returns 1 to the operating system;
     }
 
-    cout << "Switches make this number: " << ReadAllSwitches(pBase) << endl;
-
-/*
-	int allLedValue;
-	cout << "Value for all LEDs" << endl;
-	cin >> allLedValue;
-
-	WriteAllLeds(pBase, allLedValue);
- 
-	 
-	int led;
-	cout << "Enter an LED to toggle:" << endl;
-	cin >> led;
-
-	int value;
-	cout << "Enter a state for the LED:" << endl;
-	cin >> value;
-
-	Write1Led(pBase, led, value);
- 
-  int s;
-  cout << "Enter a switch to read: " << endl;
-  cin >> s;
-  
-  int s_state = Read1Switch(pBase, s);
-  
-  if (s_state) {
-     cout << "The switch is on" << endl;
-  } else {
-     cout << "The switch is off" << endl;
-  }
-*/
-
+    int ledValue = ReadAllSwitches(pBase);
+    int prevButtonValue = 0;
+    int nextButtonValue = 0;
+    while (true) {
+        WriteAllLeds(pBase, ledValue);
+        nextButtonValue = PushButtonGet(pBase);
+        if (nextButtonValue != prevButtonValue) {
+            prevButtonValue = nextButtonValue;
+            cout << nextButtonValue << endl;
+            switch (nextButtonValue) {
+                // Left
+                case 1:
+                    ledValue = ledValue << 1;
+                    break;
+                    // Right
+                case 2:
+                    ledValue = ledValue >> 1;
+                    break;
+                    // Up
+                case 3:
+                    ledValue++;
+                    break;
+                    // Down
+                case 4:
+                    ledValue--;
+                    break;
+                    // Center
+                case 5:
+                    ledValue = ReadAllSwitches(pBase);
+                    break;
+            }
+        }
+    }
 
 
     // Done
