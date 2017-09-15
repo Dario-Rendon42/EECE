@@ -42,11 +42,11 @@ private:
     int fd;
 public:
 
-/** 
- * Initialize general-purpose I/O 
- *  - Opens access to physical memory /dev/mem 
- *  - Maps memory at offset 'gpio_address' into virtual address space  
- */
+    /**
+     * Initialize general-purpose I/O
+     *  - Opens access to physical memory /dev/mem
+     *  - Maps memory at offset 'gpio_address' into virtual address space
+     */
     ZedBoard() {
         fd = open("/dev/mem", O_RDWR);
         pBase = (char *) mmap(NULL, gpio_size, PROT_READ | PROT_WRITE, MAP_SHARED,
@@ -60,57 +60,57 @@ public:
         }
     }
 
-/**
- * Close general-purpose I/O. 
- */
+    /**
+     * Close general-purpose I/O.
+     */
     ~ZedBoard() {
         munmap(pBase, gpio_size);
         close(fd);
     }
 
-/**
- * Write a 4-byte value at the specified general-purpose I/O location. 
- * 
- * @parem offset	Offset where device is mapped. 
- * @param value	Value to be written. 
- */
+    /**
+     * Write a 4-byte value at the specified general-purpose I/O location.
+     *
+     * @parem offset	Offset where device is mapped.
+     * @param value	Value to be written.
+     */
     void RegisterWrite(int offset, int value) {
         *(int *) (pBase + offset) = value;
     }
 
-/**
- * Read a 4-byte value from the specified general-purpose I/O location. 
- * 
- * @param offset	Offset where device is mapped. 
- * @return		Value read. 
- */
+    /**
+     * Read a 4-byte value from the specified general-purpose I/O location.
+     *
+     * @param offset	Offset where device is mapped.
+     * @return		Value read.
+     */
     int RegisterRead(int offset) {
         return *(int *) (pBase + offset);
     }
 
     /** Changes the state of an LED (ON or OFF)
-   * @param ledNum LED number (0 to 7)
-   * @param state State to change to (ON or OFF)
-   */
+    * @param ledNum LED number (0 to 7)
+    * @param state State to change to (ON or OFF)
+    */
     void Write1Led(int ledNum, int state) {
         int ledOffset = 0x4 * ledNum + gpio_led1_offset;
         RegisterWrite(ledOffset, state);
     }
 
-/** Reads the value of a switch
-* - Uses base address of I/O
-* @param switchNum Switch number (0 to 7)
-* @return Switch value read
-*/
+    /** Reads the value of a switch
+     * - Uses base address of I/O
+     * @param switchNum Switch number (0 to 7)
+     * @return Switch value read
+     */
     int Read1Switch(int switchNum) {
         int switchOffset = 0x4 * switchNum + gpio_sw1_offset;
         return RegisterRead(switchOffset);
     }
 
 
-/** Read the state of the buttons
-*
-*/
+    /**
+     * Read the state of the buttons
+     */
     int PushButtonGet() {
         for (int i = 0; i < 5; i++) {
             int value = RegisterRead(gpio_pbtnl_offset + 4 * i);
@@ -122,10 +122,10 @@ public:
     }
 
 
-/** Set the state of the LEDs with the given value.
-*
-* @param value Value between 0 and 255 written to the LEDs
-*/
+    /** Set the state of the LEDs with the given value.
+     *
+     * @param value Value between 0 and 255 written to the LEDs
+     */
     void WriteAllLeds(int value) {
         for (int ledIndex = 0; ledIndex < 8; ledIndex++) {
             int ledState = value % 2;
@@ -134,10 +134,10 @@ public:
         }
     }
 
-/** Reads all the switches and returns their value in a single integer.
-*
-* @return A value that represents the value of the switches
-*/
+    /** Reads all the switches and returns their value in a single integer.
+     *
+     * @return A value that represents the value of the switches
+     */
     int ReadAllSwitches() {
         int sum = 0;
         for (int i = 7; i >= 0; i--) {

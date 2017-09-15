@@ -87,30 +87,30 @@ void Finalize(char *pBase, int fd) {
 
 
 /** Changes the state of an LED (ON or OFF)
-* @param pBase base address of I/O
-* @param ledNum LED number (0 to 7)
-* @param state State to change to (ON or OFF)
-*/
+ * @param pBase base address of I/O
+ * @param ledNum LED number (0 to 7)
+ * @param state State to change to (ON or OFF)
+ */
 void Write1Led(char *pBase, int ledNum, int state) {
     int ledOffset = 0x4 * ledNum + gpio_led1_offset;
     return RegisterWrite(pBase, ledOffset, state);
 }
 
 /** Reads the value of a switch
-* - Uses base address of I/O
-* @param pBase base address of I/O
-* @param switchNum Switch number (0 to 7)
-* @return Switch value read
-*/
+ * - Uses base address of I/O
+ * @param pBase base address of I/O
+ * @param switchNum Switch number (0 to 7)
+ * @return Switch value read
+ */
 int Read1Switch(char *pBase, int switchNum) {
     int switchOffset = 0x4 * switchNum + gpio_sw1_offset;
     return RegisterRead(pBase, switchOffset);
 }
 
 /** Read the state of the buttons
-*
-* @param pBase Base address for general-purpose I/O
-*/
+ *
+ * @param pBase Base address for general-purpose I/O
+ */
 int PushButtonGet(char *pBase) {
     for (int i = 0; i < 5; i++) {
         int value = RegisterRead(pBase, gpio_pbtnl_offset + 4 * i);
@@ -123,10 +123,10 @@ int PushButtonGet(char *pBase) {
 
 
 /** Set the state of the LEDs with the given value.
-*
-* @param pBase Base address for general-purpose I/O
-* @param value Value between 0 and 255 written to the LEDs
-*/
+ *
+ * @param pBase Base address for general-purpose I/O
+ * @param value Value between 0 and 255 written to the LEDs
+ */
 void WriteAllLeds(char *pBase, int value) {
     for (int ledIndex = 0; ledIndex < 8; ledIndex++) {
         int ledState = value % 2;
@@ -136,10 +136,10 @@ void WriteAllLeds(char *pBase, int value) {
 }
 
 /** Reads all the switches and returns their value in a single integer.
-*
-* @param pBase Base address for general-purpose I/O
-* @return A value that represents the value of the switches
-*/
+ *
+ * @param pBase Base address for general-purpose I/O
+ * @return A value that represents the value of the switches
+ */
 int ReadAllSwitches(char *pBase) {
     int sum = 0;
     for (int i = 7; i >= 0; i--) {
